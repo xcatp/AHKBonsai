@@ -2,7 +2,7 @@
 
 `AHKBonsai` is a port of [cbonsai](https://github.com/mhzawadi/homebrew-cbonsai), written in `AHK2`.
 
-![AHKBonsai](res/AHKBonsai-1747750344039.gif)
+![AHKBonsai](res/AHKBonsai.gif)
 
 
 ### Inspiration
