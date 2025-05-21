@@ -10,8 +10,8 @@ renderLines() { ; 从缓冲区 yBase 开始，创建 tH 行
     elLines.Push([]), i := elLines.Length
     for v in line {
       t := g.AddText(
-        Format('0x80 {} y{} {} Background{} c{}'
-          , (A_Index = 1 ? 'xs Section' : 'x+0')
+        Format('0x80 x{} y{} {} Background{} c{}'
+          , (A_Index - 1) * CW
           , y * ch, (v.combine ? 'w' cw * 2 : ''), v.bg, v.fg)
         , v.ch
       )
@@ -40,7 +40,7 @@ updateLine(y) {
 
 updateCell(x, y) {
   buf := normal
-  el := elLines[y + 1][x + 1], cell := buf.lines[buf.yBase + y + 1].line[x + 1]
+  el := elLines[y + 1][x + 1], cell := buf.getCell(x, y)
   if cell.equals(el.cellData) {
     return
   }

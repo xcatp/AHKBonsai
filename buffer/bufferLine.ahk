@@ -27,7 +27,7 @@ class BufferLine {
   getLineStr(trim, start := 1, end := tW) {
     r := ''
     loop end - start {
-      r .= this.line[start + A_Index - 1]
+      r .= this.line[start + A_Index - 1].ch
     }
     return trim ? RTrim(r) : r
   }
