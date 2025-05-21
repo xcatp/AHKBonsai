@@ -25,14 +25,15 @@ config := {
   loadFile: createDefaultCachePath()    ; TODO
 }
 
-stop := 0
+stop := 0, running := false, startTime := A_TickCount
 counters := { branches: 0, shoots: 0, shootCounter: 0 }
 
 q:: global stop := 1
 ;========
 
 quit(conf) {
-
+  global
+  stop := 0, running := false
 }
 
 saveToFile(fName, seed, branchCount) {
@@ -273,6 +274,8 @@ branch(win, conf, counters, y, x, branchType, life) {
       continue
     ; 不做宽字符处理
     mvprint(win, y, x, str)
+    attron(styles.grey)
+    mvprint(win, 1, 0, Format("{:.2f}", (A_TickCount - startTime) / 1000))
 
     if conf.live and !(conf.load && counters.branches < conf.targetBranchCount)
       updateScreen(conf.timeStep)
@@ -280,7 +283,6 @@ branch(win, conf, counters, y, x, branchType, life) {
 }
 
 init(win, conf) {
-
   drawWins(win, conf.baseType)
 }
 
@@ -303,8 +305,14 @@ createDefaultCachePath() {
 
 
 main(win, conf) {
-  global stop
-  stop := 0
+  global stop, running
+  if running {
+    return
+  }
+
+  global startTime := A_TickCount
+  stop := 0, running := true
+
   resetWin(win)
   if conf.leaves.Length = 0 {
     conf.leaves.Push('&')
@@ -332,7 +340,7 @@ main(win, conf) {
     }
   } until stop or !conf.infinite
 
-  mvprint(normal, 1, 0, 'Done!')
+  mvprint(normal, 1, 0, 'Done!   ')
   updateScreen(0)
 
   if conf.printTree {

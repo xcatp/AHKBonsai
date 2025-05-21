@@ -50,5 +50,5 @@ PrintC(*) {
   }
   A_Clipboard := str
   printMsg(normal, 'Saved to clipboard!')
-  updateLines()
+  updateScreen(0)
 }
