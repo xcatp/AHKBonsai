@@ -5,7 +5,7 @@ trunk := 1, shootLeft := 2, shootRight := 3, dying := 4, dead := 5
 
 config := {
   live: 1,
-  infinite: 0,    ; TODO
+  infinite: 1,
   printTree: 0,   ; TODO
   verbosity: 0,   ; TODO
   lifeStart: 32,
@@ -303,7 +303,9 @@ createDefaultCachePath() {
 
 
 main(win, conf) {
-
+  global stop
+  stop := 0
+  resetWin(win)
   if conf.leaves.Length = 0 {
     conf.leaves.Push('&')
   }
@@ -313,22 +315,22 @@ main(win, conf) {
     loadFromFile(conf)
 
   if conf.seed = 0 {
-    conf.seed := Random(0, 10000)
+    conf.seed := Random(0, 100000)
   }
   global _random := PseudoRandom(conf.seed)
-  printMsg(win, 'seed:' conf.seed)
+  attron(styles.orange)
+  mvprint(win, 0, 0, 'seed:' conf.seed)
 
-  ; global stop
-  ; loop {
-  init(win, conf)
-  growTree(win, conf, counters)
-  if conf.load
-    conf.targetBranchCount := 0
-  if conf.infinite { ; Fixme
-    Sleep conf.timeWait
-  }
-  ;   ToolTip A_Index
-  ; } until !stop
+  loop {
+    init(win, conf)
+    growTree(win, conf, counters)
+    if conf.load
+      conf.targetBranchCount := 0
+    if conf.infinite {
+      Sleep conf.timeWait
+      mvprint(win, tH - 1, 0, 'Loop' A_Index)
+    }
+  } until stop or !conf.infinite
 
   mvprint(normal, 1, 0, 'Done!')
   updateScreen(0)
