@@ -309,7 +309,18 @@ init(win, conf) {
 }
 
 growTree(win, conf, counters) {
-  maxY := tH - (conf.baseType = 1 ? 4 : 3), maxX := tW
+
+  baseHeight := 1, baseWidth := 0
+  switch (conf.baseType) {
+    case 1:
+      baseWidth := 30
+      baseHeight := 4
+    case 2:
+      baseWidth := 16
+      baseHeight := 3
+  }
+
+  maxY := tH - baseHeight, maxX := tW
   counters.shoots := 0, counters.branches := 0, counters.shootCounter = rand()
 
   if conf.verbosity > 0 {
