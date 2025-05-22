@@ -6,10 +6,10 @@
   trunk2: { bg: bk, fg: '8a966c', ex: '' },
   shoot1: { bg: bk, fg: '704C55', ex: '' },
   shoot2: { bg: bk, fg: '995e6d', ex: '' },
-  dying1: { bg: bk, fg: '00ce3e', ex: 'italic' },
+  dying1: { bg: bk, fg: '00ce3e', ex: 'Italic' },
   dying2: { bg: bk, fg: '007510', ex: '' },
   dead1: { bg: bk, fg: 'c89670', ex: '' },
-  dead2: { bg: bk, fg: '915c40', ex: 'bold' },
+  dead2: { bg: bk, fg: '915c40', ex: 'Bold' },
 }
 
 
