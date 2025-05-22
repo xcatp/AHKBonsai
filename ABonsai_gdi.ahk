@@ -38,6 +38,7 @@ OnContext(g, *) {
   m := Menu()
   m.Add('regrow', (*) => (config.seed := 0, main(normal, config)))
   m.Add('print', PrintC)
+  m.Add('help', (*) => printHelp(normal))
   m.Add('exit', (*) => ExitApp())
   m.Show()
 }
@@ -52,23 +53,7 @@ PrintC(*) {
   updateScreen(0)
 }
 
-
 FrameShadow(hwnd) {
   DllCall("dwmapi\DwmExtendFrameIntoClientArea", "ptr", hwnd, "ptr", Buffer(16, -1))
   DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", 2, "int*", 2, "uint", 4)
-}
-
-InitConfig(argv) {
-  global
-  config.live := argv.hasParam('l')
-  config.infinite := argv.hasParam('I')
-  config.printTime := argv.hasParam('p')
-  config.verbosity := argv.hasParam('v')
-  config.baseType := argv.getKV('type', 1)
-  config.seed := argv.getKV('seed', 0)
-  config.timeStep := argv.getKV('step', 40)
-  config.timeWait := argv.getKV('wait', 1000)
-  config.leaves := argv.getKV('leaves', '#&*').split('')
-  config.multiplier := argv.getKV('factor', 5)
-  config.lifeStart := argv.getKV('life', 32)
 }
