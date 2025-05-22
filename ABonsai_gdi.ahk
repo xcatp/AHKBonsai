@@ -3,30 +3,34 @@
 #Include buffer\cellData.ahk
 #Include buffer\buffer.ahk
 #Include render\gdi_render.ahk
+#Include aBonsai\parse.ahk
 
 ESC:: ExitApp()
 
+parseResult := Parse(A_Args.join(A_Space))
+if !parseResult.valid {
+  MsgBox parseResult.msg
+  return
+}
+
 bk := '272933', border := 'a0a0a0'
 
-gw := CW * tW, gh := CH * tH
+#Include aBonsai\bonsai.ahk
+
+InitConfig(parseResult.parsed)
+
+gw := CW * tW, gh := CH * tH, defaultFillAttr := CellData('ffffff', bk, ' ', false, '')
 g := Gui('AlwaysOnTop -Caption +ToolWindow +E0x00080000')
 g.Show(Format('x{} y{}', (A_ScreenWidth - gw) // 2, (A_ScreenHeight - gh) // 2))
 FrameShadow(g.Hwnd)
 
 normal := BufferLines()
-normal.fillViewportRows(CellData('ffffff', bk, ' ', false, ''))
+normal.fillViewportRows(defaultFillAttr)
 updateScreen(0)
 
-#Include aBonsai\bonsai.ahk
 OnMessage(0x0201, (*) => PostMessage(0xA1, 2))
 
-config.live := 1
-config.timeStep := 0
-config.seed := 83
-config.leaves := ['#', '&', '*']
-config.infinite := 0
 main(normal, config)
-
 
 g.OnEvent('ContextMenu', OnContext)
 
@@ -52,4 +56,19 @@ PrintC(*) {
 FrameShadow(hwnd) {
   DllCall("dwmapi\DwmExtendFrameIntoClientArea", "ptr", hwnd, "ptr", Buffer(16, -1))
   DllCall("dwmapi\DwmSetWindowAttribute", "ptr", hwnd, "uint", 2, "int*", 2, "uint", 4)
+}
+
+InitConfig(argv) {
+  global
+  config.live := argv.hasParam('l')
+  config.infinite := argv.hasParam('I')
+  config.printTime := argv.hasParam('p')
+  config.verbosity := argv.hasParam('v')
+  config.baseType := argv.getKV('type', 1)
+  config.seed := argv.getKV('seed', 0)
+  config.timeStep := argv.getKV('step', 40)
+  config.timeWait := argv.getKV('wait', 1000)
+  config.leaves := argv.getKV('leaves', '#&*').split('')
+  config.multiplier := argv.getKV('factor', 5)
+  config.lifeStart := argv.getKV('life', 32)
 }
