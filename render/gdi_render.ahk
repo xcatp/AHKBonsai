@@ -10,7 +10,7 @@ renderLines() { ; 从缓冲区 yBase 开始，创建 tH 行
   Gdip_SetSmoothingMode(Graph, 4)
 
   Font := 'Consolas'
-  Gdip_FontFamilyCreate(Font)
+  hFamily := Gdip_FontFamilyCreate(Font)
 
   pBrush := Gdip_BrushCreateSolid('0xFF' bk)
   Gdip_FillRoundedRectangle(Graph, pBrush, 0, 0, gw, gh, 0) ; bk
@@ -39,6 +39,7 @@ renderLines() { ; 从缓冲区 yBase 开始，创建 tH 行
   DeleteObject(hbm)
   DeleteDC(hdc)
   Gdip_DeleteGraphics(Graph)
+  Gdip_DeleteFontFamily(hFamily)
 }
 
 

@@ -57,5 +57,5 @@ printMsg(win, str) {
 
 resetWin(win) {
   win.Clear()
-  win.fillViewportRows(CellData('b7b7b7', bk, A_Space, false, ''))
+  win.fillViewportRows(defaultFillAttr)
 }
