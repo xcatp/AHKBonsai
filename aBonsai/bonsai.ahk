@@ -8,6 +8,7 @@ config := {
   infinite: 1,
   printTree: 0,   ; TODO
   verbosity: 0,   ; TODO
+  printTime: 1,
   lifeStart: 32,
   multiplier: 5,
   baseType: 1,
@@ -49,22 +50,40 @@ finish(conf, counters) {
 }
 
 drawBase(win, baseType) {
-  w := 30, h := 4, y := tH - h, x := tW // 2 - w // 2
-  move(y, x)
-  attron(styles.grey)
-  print(win, ':')
-  attron(styles.green)
-  print(win, '__________')
-  attron(styles.orange)
-  print(win, './~~~~\.')
-  attron(styles.green)
-  print(win, '__________')
-  attron(styles.grey)
-  print(win, ':')
-  attron(styles.grey)
-  mvprint(win, y + 1, x, ' \                          / ')
-  mvprint(win, y + 2, x, '  \________________________/  ')
-  mvprint(win, y + 3, x, '  (_)                    (_)  ')
+  switch baseType {
+    case 1:
+      w := 30, h := 4, y := tH - h, x := tW // 2 - w // 2
+      move(y, x)
+      attron(styles.grey)
+      print(win, ':')
+      attron(styles.green)
+      print(win, '__________')
+      attron(styles.orange)
+      print(win, './~~~~\.')
+      attron(styles.green)
+      print(win, '__________')
+      attron(styles.grey)
+      print(win, ':')
+      attron(styles.grey)
+      mvprint(win, y + 1, x, ' \                          / ')
+      mvprint(win, y + 2, x, '  \________________________/  ')
+      mvprint(win, y + 3, x, '  (_)                    (_)  ')
+    case 2:
+      w := 16, h := 3, y := tH - h, x := tW // 2 - w // 2
+      move(y, x)
+      attron(styles.grey)
+      print(win, '(')
+      attron(styles.green)
+      print(win, '---')
+      attron(styles.orange)
+      print(win, './~~~\.')
+      attron(styles.green)
+      print(win, '---')
+      attron(styles.grey)
+      print(win, ')')
+      mvprint(win, y + 1, x, ' (           ) ')
+      mvprint(win, y + 2, x, '  (_________)  ')
+  }
 }
 
 drawWins(win, baseType) {
@@ -274,8 +293,11 @@ branch(win, conf, counters, y, x, branchType, life) {
       continue
     ; 不做宽字符处理
     mvprint(win, y, x, str)
-    attron(styles.grey)
-    mvprint(win, 1, 0, Format("{:.2f}", (A_TickCount - startTime) / 1000))
+
+    if conf.printTime {
+      attron(styles.grey)
+      mvprint(win, 1, 0, Format("{:.2f}", (A_TickCount - startTime) / 1000))
+    }
 
     if conf.live and !(conf.load && counters.branches < conf.targetBranchCount)
       updateScreen(conf.timeStep)
@@ -287,7 +309,7 @@ init(win, conf) {
 }
 
 growTree(win, conf, counters) {
-  maxY := tH - 4, maxX := tW
+  maxY := tH - (conf.baseType = 1 ? 4 : 3), maxX := tW
   counters.shoots := 0, counters.branches := 0, counters.shootCounter = rand()
 
   if conf.verbosity > 0 {
@@ -337,6 +359,7 @@ main(win, conf) {
     if conf.infinite {
       Sleep conf.timeWait
       mvprint(win, tH - 1, 0, 'Loop' A_Index)
+      updateScreen(0)
     }
   } until stop or !conf.infinite
 
