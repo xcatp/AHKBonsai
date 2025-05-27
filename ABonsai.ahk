@@ -1,4 +1,6 @@
-﻿#Include _lib\Extend.ahk
+﻿; Deprecated
+
+#Include _lib\Extend.ahk
 
 #Include buffer\cellData.ahk
 #Include buffer\buffer.ahk
