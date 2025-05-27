@@ -7,7 +7,7 @@ config := {
   live: 1,
   infinite: 1,
   printTree: 0,   ; TODO
-  verbosity: 0,   ; TODO
+  verbosity: 0,
   printTime: 1,
   lifeStart: 32,
   multiplier: 5,
@@ -277,6 +277,7 @@ branch(win, conf, counters, y, x, branchType, life) {
         counters.shoots++, counters.shootCounter++
         if conf.verbosity {
           ; do log
+          mvprint(win, 2, 0, 'shoots: ' counters.shoots)
         }
         branch(win, conf, counters, y, x, Mod(counters.shootCounter, 2) + 1, shootLife)
       }
@@ -284,6 +285,7 @@ branch(win, conf, counters, y, x, branchType, life) {
     shootCooldown--
     if conf.verbosity {
       ;do log
+      mvprint(win, 3, 0, 'type: ' branchType)
     }
     x += dx, y += dy
     chooseColor(branchType)
@@ -364,14 +366,15 @@ main(win, conf) {
 
   loop {
     init(win, conf)
-    growTree(win, conf, counters)
-    if conf.load
-      conf.targetBranchCount := 0
     if conf.infinite {
-      Sleep conf.timeWait
       mvprint(win, tH - 1, 0, 'Loop' A_Index)
       updateScreen(0)
     }
+    growTree(win, conf, counters)
+    if conf.load
+      conf.targetBranchCount := 0
+    if conf.infinite
+      Sleep conf.timeWait
   } until stop or !conf.infinite
 
   mvprint(normal, 1, 0, 'Done!   ')
