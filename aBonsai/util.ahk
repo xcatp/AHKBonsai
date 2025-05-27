@@ -1,19 +1,19 @@
 ﻿styles := {
-  grey: { bg: bk, fg: 'b6b6b6', ex: '' },
-  green: { bg: bk, fg: '00ff80', ex: '' },
-  orange: { bg: bk, fg: 'ff6f00', ex: '' },
-  trunk1: { bg: bk, fg: '7a6b63', ex: '' },
-  trunk2: { bg: bk, fg: '8a966c', ex: '' },
-  shoot1: { bg: bk, fg: '704C55', ex: '' },
-  shoot2: { bg: bk, fg: '995e6d', ex: '' },
-  dying1: { bg: bk, fg: '00ce3e', ex: 'Italic' },
-  dying2: { bg: bk, fg: '007510', ex: '' },
-  dead1: { bg: bk, fg: 'c89670', ex: '' },
-  dead2: { bg: bk, fg: '915c40', ex: 'Bold' },
+  grey: { bg: '', fg: 'b6b6b6', ex: '' },
+  green: { bg: '', fg: '00ff80', ex: '' },
+  orange: { bg: '', fg: 'ff6f00', ex: '' },
+  trunk1: { bg: '', fg: '7a6b63', ex: '' },
+  trunk2: { bg: '', fg: '8a966c', ex: '' },
+  shoot1: { bg: '', fg: '704C55', ex: '' },
+  shoot2: { bg: '', fg: '995e6d', ex: '' },
+  dying1: { bg: '', fg: '00ce3e', ex: 'Italic' },
+  dying2: { bg: '', fg: '007510', ex: '' },
+  dead1: { bg: '', fg: 'c89670', ex: '' },
+  dead2: { bg: '', fg: '915c40', ex: 'Bold' },
 }
 
 
-curStyle := CellData('white', bk, '', false, '')
+curStyle := CellData('white', '', '', false, '')
 
 attron(style) {
   curStyle.bg := style.bg
@@ -62,12 +62,12 @@ resetWin(win) {
 
 printHelp(win) {
   resetWin(win)
-  white := { bg: bk, fg: 'f1f1f1', ex: '' }
+  white := { bg: '', fg: 'f1f1f1', ex: '' }
   attron(white)
   mvprint(win, 0, 1, 'Usage: ABonsai [-l -seed=83]...')
   attron(styles.grey)
   mvprint(win, 2, 1, '  ahkbonsai is a beautifully random bonsai tree generator.')
-  attron({ bg: bk, fg: '8497bf', ex: 'Italic Underline' })
+  attron({ bg: '', fg: '8497bf', ex: 'Italic Underline' })
   mvprint(win, 3, 1, '                        https://github.com/xcatp/AHKBonsai')
   attron(white)
   mvprint(win, 5, 1, 'Options:')
@@ -117,3 +117,37 @@ InitConfig(argv) {
 }
 
 clamp(x, minV, maxV) => Min(Max(x, minV), maxV)
+
+
+TransparentWin(accent_state, hwnd) {
+  ;0, 1, 2, 3
+  WCA_ACCENT_POLICY := 19, pad := A_PtrSize = 8 ? 4 : 0, gradient_color := "0x01000000"
+  ACCENT_POLICY := Buffer(16, 0), WINCOMPATTRDATA := Buffer(4 + pad + A_PtrSize + 4 + pad, 0)
+
+  NumPut("int", (accent_state > 0 && accent_state < 4) ? accent_state : 0, ACCENT_POLICY, 0)
+    , NumPut("int", gradient_color, ACCENT_POLICY, 8)
+    , NumPut("int", WCA_ACCENT_POLICY, WINCOMPATTRDATA, 0)
+    , NumPut("int*", ACCENT_POLICY.ptr, WINCOMPATTRDATA, 4 + pad)
+    , NumPut("uint", ACCENT_POLICY.size, WINCOMPATTRDATA, 4 + pad + A_PtrSize)
+  DllCall("user32\SetWindowCompositionAttribute", "ptr", hwnd, "ptr", WINCOMPATTRDATA)
+}
+
+
+FrameShadow(HGui) {
+  ; makes the captionless window a drop shadow
+  ; code borrowed from here: https://www.autohotkey.com/boards/viewtopic.php?t=29117
+
+  DllCall("dwmapi\DwmIsCompositionEnabled", "IntP", &_ISENABLED := 0) ; Get if DWM Manager is Enabled
+  if !_ISENABLED ; if DWM is not enabled, Make Basic Shadow
+    DllCall("SetClassLong", "UInt", HGui, "Int", -26, "Int", DllCall("GetClassLong", "UInt", HGui, "Int", -26) |
+      0x20000)
+  else {
+    _MARGINS := Buffer(16)
+    NumPut("UInt", 1, _MARGINS, 0)
+    NumPut("UInt", 1, _MARGINS, 4)
+    NumPut("UInt", 1, _MARGINS, 8)
+    NumPut("UInt", 1, _MARGINS, 12)
+    DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", HGui, "UInt", 2, "Int*", 2, "UInt", 4)
+    DllCall("dwmapi\DwmExtendFrameIntoClientArea", "Ptr", HGui, "Ptr", _MARGINS.Ptr)
+  }
+}
